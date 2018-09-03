@@ -27,7 +27,8 @@ function setup() {
   // Hide the video element, and just show the canvas
   video.hide();
 
-  img = loadImage("assets/wave.jpg");
+  // img = loadImage("assets/wave.jpg");
+  img = createImg("https://www.askideas.com/media/14/Smile-Clipart.jpg");
 }
 
 function modelReady() {
@@ -83,6 +84,6 @@ function displayImg() {
     // For each pose detected, loop through all the keypoints
     let pose = poses[i].pose;
     // Displays the image at point (0, height/2) at half size
-    image(img, pose.keypoints[0].position.x, pose.keypoints[0].position.y, img.width/2, img.height/2);
+    image(img, pose.keypoints[0].position.x, pose.keypoints[0].position.y, img.width/5, img.height/5);
   }
 }
