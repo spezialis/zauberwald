@@ -29,6 +29,7 @@ function setup() {
 
   // img = loadImage("assets/wave.jpg");
   img = createImg("https://www.askideas.com/media/14/Smile-Clipart.jpg");
+  img.hide();
 }
 
 function modelReady() {
