@@ -1,36 +1,5 @@
-
-// Copyright (c) 2018 ml5
-//
-// This software is released under the MIT License.
-// https://opensource.org/licenses/MIT
-
-/* ===
-ml5 Example
-PoseNet example using p5.js
-=== */
-
-/* Points
-| Id | Part |
-| -- | -- |
-| 0 | nose |
-| 1 | leftEye |
-| 2 | rightEye |
-| 3 | leftEar |
-| 4 | rightEar |
-| 5 | leftShoulder |
-| 6 | rightShoulder |
-| 7 | leftElbow |
-| 8 | rightElbow |
-| 9 | leftWrist |
-| 10 | rightWrist |
-| 11 | leftHip |
-| 12 | rightHip |
-| 13 | leftKnee |
-| 14 | rightKnee |
-| 15 | leftAnkle |
-| 16 | rightAnkle |
-*/
-
+// const sWidth = window.innerWidth;
+// const sHeight = window.innerHeight;
 const sWidth = 640;
 const sHeight = 480;
 const w = 32;
@@ -41,11 +10,14 @@ let video;
 let poseNet;
 let poses = [];
 
+//
+// Game of Life
+//
 
 
 function setup() {
   createCanvas(sWidth, sHeight);
-  frameRate(5);
+  frameRate(24);
 
   gol = new GOL();
   // gol.init();
@@ -67,6 +39,9 @@ function setup() {
   // Hide the video element, and just show the canvas
   video.hide();
 
+  // img = loadImage("assets/wave.jpg");
+  // img = createImg("https://www.askideas.com/media/14/Smile-Clipart.jpg");
+  // img.hide();
 }
 
 function draw() {
@@ -76,23 +51,21 @@ function draw() {
   gol.display();
   // image(video, 0, 0, sWidth, sHeight);
 
-  // Draw the nose
-  drawNose();
+  // We can call both functions to draw all keypoints and the skeletons
+  drawKeypoints();
+  // drawSkeleton();
 
-  // Start elements on body part
-  gol.drawOnBodyPart(0);
 
-  // console.log(drawOnBodyPart());
+  drawOnBodyPart(0);
+
+  //print pose position
+
+  // console.log(logPosePosition(0));
+  // logPosePosition(0);
 }
 
-
-//
-// Game of Life ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-//
-
 function mouseClicked() {
-  gol.drawOnBodyPart(0);
-  // gol.init();
+  gol.init();
 }
 
 
@@ -115,8 +88,8 @@ class GOL {
   }
 
   init() {
-    for (let i = 1; i < columns-1; i++) {
-      for (let j = 1; j < rows-1; j++) {
+    for (let i =1;i < columns-1;i++) {
+      for (let j =1;j < rows-1;j++) {
         board[i][j] = int(random(2));
       }
     }
@@ -164,31 +137,43 @@ class GOL {
       }
     }
   }
-
-  drawOnBodyPart(bodyPart) {
-
-    if (getBodypartPosition(bodyPart)) {
-      for (let i = 1; i < columns-1;i++) {
-
-        if (int(sWidth - getBodypartPosition(bodyPart).x)/w >= i-1 && int(sWidth - getBodypartPosition(bodyPart).x)/w <= i+1) {
-          for (let j = 1; j < rows-1;j++) {
-            if (int(getBodypartPosition(bodyPart).y)/w >= j-1 && int(getBodypartPosition(bodyPart).y)/w <= j+1) {
-              board[i][j] = 1;
-            } else {
-              board[i][j] = 0;
-            }
-          }
-        }
-
-      }
-    }
-  }
 }
 
 //
-// PoseNet –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+// PoseNet
 //
 
+// Copyright (c) 2018 ml5
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
+/* ===
+ml5 Example
+PoseNet example using p5.js
+=== */
+
+/* Points
+| Id | Part |
+| -- | -- |
+| 0 | nose |
+| 1 | leftEye |
+| 2 | rightEye |
+| 3 | leftEar |
+| 4 | rightEar |
+| 5 | leftShoulder |
+| 6 | rightShoulder |
+| 7 | leftElbow |
+| 8 | rightElbow |
+| 9 | leftWrist |
+| 10 | rightWrist |
+| 11 | leftHip |
+| 12 | rightHip |
+| 13 | leftKnee |
+| 14 | rightKnee |
+| 15 | leftAnkle |
+| 16 | rightAnkle |
+*/
 
 
 
@@ -213,20 +198,6 @@ function drawKeypoints()  {
         ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
       }
     }
-  }
-}
-
-// A function to draw ellipses over the detected keypoints
-function drawNose()  {
-  // Loop through all the poses detected
-  for (let i = 0; i < poses.length; i++) {
-    // For each pose detected, loop through all the keypoints
-    let pose = poses[i].pose;
-
-    let nosePoint = pose.keypoints[0];
-    ellipse(sWidth - nosePoint.position.x, nosePoint.position.y, 10, 10);
-
-
   }
 }
 
@@ -272,37 +243,18 @@ function logPosePosition(bodyPart) {
   }
 }
 
-function getBodypartPosition(bodyPart) {
+function drawOnBodyPart(bodyPart) {
 
-  if (poses.length >= 1) {
-    for (let i = 0; i < poses.length; i++) {
-      // For each pose detected, loop through all the keypoints
-      let pose = poses[i].pose;
-      for (let j = 0; j < pose.keypoints.length; j++) {
-        // A keypoint is an object describing a body part (like rightArm or leftShoulder)
-        let keypoint = pose.keypoints[j];
-        // Only draw an ellipse is the pose probability is bigger than 0.2
-        if (keypoint.score > 0.2) {
-          fill(255, 0, 0);
-          noStroke();
-          return {x: keypoint.position.x, y: keypoint.position.y };
-        }
+  if (logPosePosition() != undefined) {
+    for (let i =1;i < columns-1;i++) {
+      board[i] = logPosePosition(bodyPart).x;
+      for (let j =1;j < rows-1;j++) {
+        board[i][j] = logPosePosition(bodyPart).y;
       }
     }
+
+    console.log(logPosePosition(bodyPart));
   } else {
     return;
   }
-
 }
-
-// function drawOnBodyPart(bodyPart) {
-//
-//   if (getBodypartPosition(bodyPart)) {
-//     for (let i = 1; i < columns-1;i++) {
-//       board[i] = getBodypartPosition(bodyPart).x == i ? 1 : 0;
-//       for (let j = 1; j < rows-1;j++) {
-//         board[i][j] = getBodypartPosition(bodyPart).y == j ? 1 : 0;
-//       }
-//     }
-//   }
-// }
