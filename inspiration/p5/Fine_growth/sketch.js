@@ -1,43 +1,31 @@
-var pts;
+var pts = [];
 var onPressed;
+var weight = true;
 
 function setup() {
   createCanvas(720, 720);
-  smooth();
   colorMode(RGB);
-  rectMode(CENTER);
 
   background(255);
-
-  pts = [];
 }
 
 function draw() {
-  //background(255);
+  // background(255);
 
   if (onPressed) {
     for (var i = 0; i < 10; i++) {
-      var newP = new Jitter(touchX, touchY, i + pts.lenght, i + pts.lenght);
+      var newP = new Jitter(touchX, touchY, i + pts.length, i + pts.length);
       pts.push(newP);
     }
   }
-
-  /*if (mouseIsPressed) {
-    for (var i = 0; i < 10; i++) {
-      var newP = new Jitter(touchX, touchY, i + pts.lenght, i + pts.lenght);
-      pts.push(newP);
-    }
-  }*/
 
   for (var j = 0; j < pts.length; j++) {
     pts[j].update();
     pts[j].display();
   }
 
-  for (var k = pts.length - 1; k > -1; k--) {
-    if (pts[k].dead) {
-      pts[k].remove();
-    }
+  if (weight) {
+    background(255, 75);
   }
 }
 
@@ -49,53 +37,77 @@ function mouseReleased() {
   onPressed = false;
 }
 
+function keyPressed() {
+  if (keyCode === 67) {
+    //print("c key pressed");
+    for (var i = pts.length - 1; i > -1; i--) {
+      // pts.remove(); doesn't work
+      pts.pop(i);
+    }
 
-/*function mousePressed() {
-  //drawBug();
-  for (var i = 0; i < 10; i++) {
-    var newP = new Jitter(touchX, touchY, i + pts.length, i + pts.length);
-    pts.push(newP);
+    background(255);
   }
-}*/
 
-/*function drawBug() {
-  var bug = new Jitter(touchX, touchY);
-  pts.push(bug);
-}*/
+  if (keyCode === 78) { // n
+    for (var i = pts.length - 1; i > -1; i--) {
+      // pts.remove(); doesn't work
+      pts.pop(i);
+    }
+
+    weight = false;
+    background(255);
+    select('#status').html('Weight off');
+  }
+
+  if (keyCode === 71) { // g
+    for (var i = pts.length - 1; i > -1; i--) {
+      // pts.remove(); doesn't work
+      pts.pop(i);
+    }
+
+    weight = true;
+    background(255);
+    select('#status').html('Weight on');
+  }
+}
 
 // Jitter class
 function Jitter(x, y, xOffset, yOffset) {
 
   this.loc = createVector(x, y);
-  this.diameter = random(10, 30);
+  //this.diameter = random(10, 30);
 
-  var randDegrees = random(360);
-  this.vel = createVector(cos(radians(randDegrees)), sin(radians(randDegrees)));
+  this.randDegrees = random(360);
+  this.vel = createVector(cos(radians(this.randDegrees)), sin(radians(this.randDegrees)));
   this.vel.mult(random(5));
 
   this.acc = createVector(0, 0);
   this.lifeSpan = random(30, 90);
   this.decay = random(0.75, 0.9);
-  this.c = color(random(255), 150, random(255));
+
+  this.alphaC;
+  // var r = 231;
+  // var g = random(158, 211);
+  // var b = random(105, 120);
+  // this.c = color(r, g, b);
+  this.c = color(random(255), random(255), 255);
+
+  this.weight;
   this.weightRange = random(3, 50);
 
   this.xOffset = xOffset;
   this.yOffset = yOffset;
 
-  this.passedLife;
-  this.dead;
-
-  this.alphaC;
-  this.weight;
+  this.passedLife = 0;
+  this.dead = false;
 
   this.update = function() {
     if (this.passedLife >= this.lifeSpan) {
       this.dead = true;
+      //return this.lifeSpan < 0;
     } else {
       this.passedLife++;
     }
-
-    //print("frameCount: " + frameCount);
 
     this.alphaC = (this.lifeSpan - this.passedLife) / this.lifeSpan * 70 + 50;
     this.weight = (this.lifeSpan - this.passedLife) / this.lifeSpan * this.weightRange;
@@ -121,15 +133,23 @@ function Jitter(x, y, xOffset, yOffset) {
   }
 
   this.display = function() {
-    //strokeWeight(this.weight + 1.5);
-    //stroke(0, this.alphaC);
-    //point(this.loc.x, this.loc.y);
-    //ellipse(this.loc.x, this.loc.y, this.diameter, this.diameter);
+    if (weight) {
+      strokeWeight(this.weight + 1.5);
+    } else {
+      strokeWeight(0);
+    }
 
-    strokeWeight(this.weight);
-    stroke(this.c);
-    //fill(this.c);
+    stroke(this.c, this.alphaC);
     point(this.loc.x, this.loc.y);
     //ellipse(this.loc.x, this.loc.y, this.diameter, this.diameter);
+
+    if (weight) {
+      strokeWeight(this.weight);
+    } else {
+      strokeWeight(0);
+    }
+
+    stroke(this.c);
+    point(this.loc.x, this.loc.y);
   };
 }
