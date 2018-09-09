@@ -1,0 +1,20 @@
+{
+  "name": "tryouts",
+  "version": "1.0.0",
+  "description": "First tries in creative coding",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel": "babel ./src/scripts/script.js --out-file ./dist/scripts/script.js --watch"
+  },
+  "author": "Gabriel Bach",
+  "license": "ISC",
+  "dependencies": {
+    "live-server": "^1.2.0",
+    "p5": "^0.7.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0"
+  }
+}
