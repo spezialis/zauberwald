@@ -29,9 +29,9 @@ PoseNet example using p5.js
 | 15 | leftAnkle |
 | 16 | rightAnkle |
 */
-const sWidth = 640;
-const sHeight = 480;
-const w = 32;
+const sWidth = 1280;
+const sHeight = 960;
+const w = 16;
 const columns = Math.floor(sWidth / w);
 const rows = Math.floor(sHeight / w);
 let board = make2DArray(columns, rows);
