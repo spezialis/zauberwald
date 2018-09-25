@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "live-server": "^1.2.0",
+    "ml5": "^0.1.1",
     "p5": "^0.7.2"
   },
   "devDependencies": {

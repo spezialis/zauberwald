@@ -65,7 +65,7 @@ function draw() {
   drawKeypoints();
   drawSkeleton();
 
-  displayImg();
+  // displayImg();
 }
 
 // A function to draw ellipses over the detected keypoints
